@@ -14,7 +14,7 @@ class Log16
     end
     @logger = logger
     @logger.formatter = proc do |severity, time, progname, msg|
-      JSON.dump(msg.merge(timestamp: time.iso8601)) + "\n"
+      JSON.dump(msg.merge(t: time.iso8601)) + "\n"
     end
     @context = context.dup.freeze
   end
@@ -43,7 +43,7 @@ class Log16
     log(message: message, severity: Logger::UNKNOWN, context: context.merge(lvl: "notice"))
   end
 
-  def add_context(context = {})
+  def new_context(context = {})
     self.class.new(@logger, context: @context.merge(context))
   end
 
