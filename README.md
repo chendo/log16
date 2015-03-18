@@ -7,7 +7,7 @@ Structured + Contextual JSON Logger wrapper
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'log16'
+gem 'log16', github: 'chendo/log16'
 ```
 
 ## Usage
@@ -21,10 +21,6 @@ context.level = Logger::WARN # Affects the parent logger level too as they share
 context.debug("invisible") # => no output
 ```
 
-## Contributing
+## License
 
-1. Fork it ( https://github.com/[my-github-username]/log16/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+MIT
