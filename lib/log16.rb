@@ -4,7 +4,7 @@ require "time"
 require "forwardable"
 
 class Log16
-  attr_reader :logger
+  attr_reader :logger, :context
   extend Forwardable
   def_delegators :logger, :level, :level=
 
@@ -16,7 +16,7 @@ class Log16
     @logger.formatter = proc do |severity, time, progname, msg|
       JSON.dump(msg.merge(t: time.iso8601(3))) + "\n"
     end
-    @context = context.dup.freeze
+    @context = context.dup
   end
 
   def debug(message, **context)
