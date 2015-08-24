@@ -9,8 +9,8 @@ class Log16
   def_delegators :logger, :level, :level=
 
   def initialize(logger, context: {})
-    if !logger.is_a?(Logger)
-      raise ArgumentError, "logger must be an instance of Logger"
+    if !logger.respond_to?(:log)
+      raise ArgumentError, "logger must respond to :log"
     end
     @logger = logger
     @logger.formatter = proc do |severity, time, progname, msg|
