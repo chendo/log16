@@ -19,27 +19,27 @@ class Log16
     @context = context.dup
   end
 
-  def debug(message, **context)
+  def debug(message = nil, **context)
     log(message: message, severity: Logger::DEBUG, context: context.merge(lvl: "debug"))
   end
 
-  def info(message, **context)
+  def info(message = nil, **context)
     log(message: message, severity: Logger::INFO, context: context.merge(lvl: "info"))
   end
 
-  def warn(message, **context)
+  def warn(message = nil, **context)
     log(message: message, severity: Logger::WARN, context: context.merge(lvl: "warn"))
   end
 
-  def error(message, **context)
+  def error(message = nil, **context)
     log(message: message, severity: Logger::ERROR, context: context.merge(lvl: "error"))
   end
 
-  def fatal(message, **context)
+  def fatal(message = nil, **context)
     log(message: message, severity: Logger::FATAL, context: context.merge(lvl: "fatal"))
   end
 
-  def notice(message, **context)
+  def notice(message = nil, **context)
     log(message: message, severity: Logger::UNKNOWN, context: context.merge(lvl: "notice"))
   end
 
@@ -51,6 +51,7 @@ class Log16
 
   def log(message:, severity:, context:)
     @logger.add(severity) do
+      message ||= context.delete(:msg)
       @context.merge(context).merge(msg: message)
     end
   end
