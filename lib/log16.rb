@@ -16,7 +16,7 @@ class Log16
     @logger.formatter = proc do |severity, time, progname, msg|
       JSON.dump(msg.merge(t: time.iso8601(3))) + "\n"
     end
-    @context = context.dup
+    @context = sanitize(context)
   end
 
   def debug(message = nil, **context)
@@ -52,7 +52,20 @@ class Log16
   def log(message:, severity:, context:)
     @logger.add(severity) do
       message ||= context.delete(:msg)
-      @context.merge(context).merge(msg: message)
+      @context.merge(sanitize(context)).merge(msg: sanitize(message))
+    end
+  end
+
+  def sanitize(obj)
+    case obj
+    when Hash
+      Hash[obj.map do |k, v|
+        [sanitize(k), sanitize(v)]
+      end]
+    when String
+      obj.encode('utf-8', fallback: -> (chr) { chr.inspect.gsub(/"(.*)"/, "[\\1]") })
+    else
+      obj
     end
   end
 end
