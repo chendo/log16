@@ -4,11 +4,11 @@ require "time"
 require "forwardable"
 
 class Log16
-  attr_reader :logger, :context
+  attr_reader :logger, :context, :options
   extend Forwardable
   def_delegators :logger, :level, :level=
 
-  def initialize(logger, context: {})
+  def initialize(logger, context: {}, options: {})
     if !logger.respond_to?(:add)
       raise ArgumentError, "#{logger.inspect} must respond to :add"
     end
@@ -17,43 +17,52 @@ class Log16
       JSON.dump(msg.merge(t: time.iso8601(3))) + "\n"
     end
     @context = sanitize(context)
+    @options = options
   end
 
   def debug(message = nil, **context)
-    log(message: message, severity: Logger::DEBUG, context: context.merge(lvl: "debug"))
+    _log(message: message, severity: Logger::DEBUG, context: {log_level: "debug"}.merge(context))
   end
 
   def info(message = nil, **context)
-    log(message: message, severity: Logger::INFO, context: context.merge(lvl: "info"))
+    _log(message: message, severity: Logger::INFO, context: {log_level: "info"}.merge(context))
   end
 
   def warn(message = nil, **context)
-    log(message: message, severity: Logger::WARN, context: context.merge(lvl: "warn"))
+    _log(message: message, severity: Logger::WARN, context: {log_level: "warn"}.merge(context))
   end
 
   def error(message = nil, **context)
-    log(message: message, severity: Logger::ERROR, context: context.merge(lvl: "error"))
+    _log(message: message, severity: Logger::ERROR, context: {log_level: "error"}.merge(context))
   end
 
   def fatal(message = nil, **context)
-    log(message: message, severity: Logger::FATAL, context: context.merge(lvl: "fatal"))
+    _log(message: message, severity: Logger::FATAL, context: {log_level: "fatal"}.merge(context))
   end
 
   def notice(message = nil, **context)
-    log(message: message, severity: Logger::UNKNOWN, context: context.merge(lvl: "notice"))
+    _log(message: message, severity: Logger::UNKNOWN, context: {log_level: "notice"}.merge(context))
+  end
+
+  def log(message = nil, **context)
+    _log(message: message, severity: Logger::UNKNOWN, context: context)
   end
 
   def new_context(context = {})
-    self.class.new(@logger, context: @context.merge(context))
+    self.class.new(@logger, context: @context.merge(context), options: @options)
   end
 
   protected
 
-  def log(message:, severity:, context:)
-    @logger.add(severity) do
+  def _log(message:, severity:, context:)
+    @logger.add(severity_override || severity) do
       message ||= context.delete(:msg)
       @context.merge(sanitize(context)).merge(msg: sanitize(message))
     end
+  end
+
+  def severity_override
+    @options[:severity]
   end
 
   def sanitize(obj)
