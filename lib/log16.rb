@@ -8,16 +8,20 @@ class Log16
   extend Forwardable
   def_delegators :logger, :level, :level=
 
+  DEFAULT_OPTIONS = {
+    timestamp_key: :t
+  }
+
   def initialize(logger, context: {}, options: {})
     if !logger.respond_to?(:add)
       raise ArgumentError, "#{logger.inspect} must respond to :add"
     end
+    @options = DEFAULT_OPTIONS.merge(options)
     @logger = logger
     @logger.formatter = proc do |severity, time, progname, msg|
-      JSON.dump(msg.merge(t: time.iso8601(3))) + "\n"
+      JSON.dump(msg.merge(@options[:timestamp_key] => time.iso8601(3))) + "\n"
     end
     @context = sanitize(context)
-    @options = options
   end
 
   def debug(message = nil, **context)
