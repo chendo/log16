@@ -9,7 +9,8 @@ class Log16
   def_delegators :logger, :level, :level=
 
   DEFAULT_OPTIONS = {
-    timestamp_key: :t
+    timestamp_key: :t,
+    message_key: :msg,
   }
 
   def initialize(logger, context: {}, options: {})
@@ -21,6 +22,7 @@ class Log16
     @logger.formatter = proc do |severity, time, progname, msg|
       JSON.dump(msg.merge(@options[:timestamp_key] => time.iso8601(3))) + "\n"
     end
+    @message_key = @options[:message_key]
     @context = sanitize(context)
   end
 
@@ -60,8 +62,8 @@ class Log16
 
   def _log(message:, severity:, context:)
     @logger.add(severity_override || severity) do
-      message ||= context.delete(:msg)
-      @context.merge(sanitize(context)).merge(msg: sanitize(message))
+      message ||= context.delete(@message_key)
+      @context.merge(sanitize(context)).merge(@message_key => sanitize(message))
     end
   end
 
