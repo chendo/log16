@@ -58,6 +58,11 @@ class Log16
     self.class.new(@logger, context: @context.merge(context), options: @options)
   end
 
+  def merge_context!(context)
+    @context.merge!(context)
+    self
+  end
+
   protected
 
   def _log(message:, severity:, context:)
