@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name          = "log16"
   spec.version       = "1.0.0"
   spec.authors       = ["Jack Chen (chendo)"]
-  spec.email         = ["github@chen.do"]
+  spec.email         = ["chendo@users.noreply.github.com"]
   spec.summary       = %q{Structured + Contextual JSON Logger wrapper}
   spec.description   = %q{Structured + Contextual JSON Logger wrapper.}
   spec.homepage      = ""
@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "json", "~> 1.8"
+  spec.add_dependency "json"
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"
 end
