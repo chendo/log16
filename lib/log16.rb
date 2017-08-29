@@ -6,7 +6,7 @@ require "forwardable"
 class Log16
   attr_reader :logger, :context, :options
   extend Forwardable
-  def_delegators :logger, :level, :level=, :debug?, :info?, :warn?, :error?, :fatal?
+  def_delegators :logger, :formatter, :formatter=, :level, :level=, :debug?, :info?, :warn?, :error?, :fatal?
 
   DEFAULT_OPTIONS = {
     timestamp_key: :t,
